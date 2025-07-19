@@ -31,6 +31,8 @@ wattwise-frontend/ios/Flutter/app.framework
 wattwise-frontend/ios/Flutter/engine/
 wattwise-frontend/linux/flutter/ephemeral/
 wattwise-frontend/windows/flutter/ephemeral/
+wattwise-frontend/lib/firebase_options.dart
+
 
 # Xcode
 wattwise-frontend/ios/Runner.xcworkspace
