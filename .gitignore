@@ -1,0 +1,82 @@
+# === GLOBAL ===
+.DS_Store
+*.log
+*.swp
+*.tmp
+.vscode/
+.idea/
+
+# ========== FRONTEND-FLUTTER ==========
+# Flutter specific
+wattwise-frontend/.dart_tool/
+wattwise-frontend/.idea/
+wattwise-frontend/.packages
+wattwise-frontend/.flutter-plugins*
+wattwise-frontend/.flutter-plugins
+wattwise-frontend/.flutter-plugins-dependencies
+wattwise-frontend/.metadata
+wattwise-frontend/build/
+wattwise-frontend/pubspec.lock
+
+# Flutter Android/iOS artifacts
+wattwise-frontend/android/.gradle/
+wattwise-frontend/android/.idea/
+wattwise-frontend/ios/Pods/
+wattwise-frontend/ios/.symlinks/
+wattwise-frontend/ios/Flutter/Flutter.framework
+wattwise-frontend/ios/Flutter/Flutter.podspec
+wattwise-frontend/ios/Flutter/Generated.xcconfig
+wattwise-frontend/ios/Flutter/app.flx
+wattwise-frontend/ios/Flutter/app.framework
+wattwise-frontend/ios/Flutter/engine/
+wattwise-frontend/linux/flutter/ephemeral/
+wattwise-frontend/windows/flutter/ephemeral/
+
+# Xcode
+wattwise-frontend/ios/Runner.xcworkspace
+wattwise-frontend/ios/Runner.xcconfig
+wattwise-frontend/ios/Pods/
+
+# macOS
+wattwise-frontend/macos/Flutter/ephemeral/
+wattwise-frontend/macos/Pods/
+wattwise-frontend/macos/build/
+
+# Web
+wattwise-frontend/web/.dart_tool/
+wattwise-frontend/web/build/
+
+# IDE-related
+wattwise-frontend/.idea/
+wattwise-frontend/.vscode/
+
+# Firebase config (optional: if you want to ignore it)
+wattwise-frontend/firebase.json
+wattwise-frontend/.firebaserc
+
+# ========== BACKEND-Node ==========
+# Node modules and logs
+wattwise-backend/node_modules/
+wattwise-backend/package-lock.json
+wattwise-backend/npm-debug.log*
+wattwise-backend/yarn-error.log*
+wattwise-backend/yarn.lock
+
+# Environment variables and secrets
+wattwise-backend/.env
+wattwise-backend/.env.local
+wattwise-backend/.env.*
+wattwise-backend/.env.*.local
+wattwise-backend/serviceAccountKey.js
+
+# Firebase service account files (if any)
+wattwise-backend/firebase-service-account.json
+
+# IDEs and editors
+**/.vscode/
+**/.idea/
+**/*.swp
+
+# OS specific
+Thumbs.db
+ehthumbs.db

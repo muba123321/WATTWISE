@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "456242029808",
+    "project_id": "wattwise-6bc0a",
+    "storage_bucket": "wattwise-6bc0a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:456242029808:android:066c1ab2cf8d5ced200e35",
+        "android_client_info": {
+          "package_name": "com.example.wattwise"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "456242029808-tj6et8qkf7fk6uq7584jgirt9v5df0og.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.wattwise",
+            "certificate_hash": "0a7b24722e791e7d96152eb938ada0ffa4bc189a"
+          }
+        },
+        {
+          "client_id": "456242029808-b2o17bufegsgrdu5plnse8ve4puc3gmi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCVNnXxGNlbpr__GiDYS-Y9E4tl_S4JJ-E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "456242029808-b2o17bufegsgrdu5plnse8ve4puc3gmi.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "456242029808-sesa42v2vg3hel58k081f5ld4o3m93p5.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.wattwise"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
