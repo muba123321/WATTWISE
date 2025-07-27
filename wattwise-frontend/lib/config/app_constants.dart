@@ -2,8 +2,8 @@ class ApiConstants {
   // Base URL - Mobile device: Your server URL will need to be updated for mobile devices
   // static const String baseUrl =
   //     'http://192.168.19.95:8000/api'; // For Android Emulator
-  static const String baseUrl =
-      'http://192.168.17.233:8000/api'; // For iOS Simulator
+  static const String baseUrl = 'http://localhost:8000/api';
+  // 'http://192.168.17.233:8000/api'; // For iOS Simulator
   // static const String baseUrl = 'https://your-app-name.replit.app/api'; // For production
 
   // Auth endpoints

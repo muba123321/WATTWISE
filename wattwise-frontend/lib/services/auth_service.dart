@@ -19,8 +19,8 @@ class AuthService {
   User? get currentUser => _auth.currentUser;
 
   Future<String?> get idToken async {
-    if (_cachedToken != null) return _cachedToken;
-    _cachedToken = await currentUser?.getIdToken();
+    final freshToken = await currentUser?.getIdToken(true); // always refresh
+    _cachedToken = freshToken;
     return _cachedToken;
   }
 
@@ -60,8 +60,7 @@ class AuthService {
 
     // ✅ Update cached user object
     _auth.currentUser;
-    print(
-        '✅ Firebase Email Verified: ${FirebaseAuth.instance.currentUser?.emailVerified}');
+    log('✅ Firebase Email Verified: ${FirebaseAuth.instance.currentUser?.emailVerified}');
 
     return userCredential;
   }
@@ -155,27 +154,33 @@ class AuthService {
       if (body != null) log('📦 Payload: $body');
 
       late http.Response response;
-      // switch (method.toUpperCase()) {
-      //   case 'GET':
-      //     response = await http.get(url, headers: headers);
-      //     break;
-      //   case 'POST':
-      //     response =
-      //         await http.post(url, headers: headers, body: jsonEncode(body));
-      //     break;
-      //   case 'PUT':
-      //     response =
-      //         await http.put(url, headers: headers, body: jsonEncode(body));
-      //     break;
-      //   case 'DELETE':
-      //     response = await http.delete(url, headers: headers);
-      //     break;
-      //   default:
-      //     throw Exception('Unsupported HTTP method: $method');
-      // }
-      response = await http
-          .post(url, headers: headers, body: jsonEncode(body))
-          .timeout(const Duration(seconds: 10));
+      switch (method.toUpperCase()) {
+        case 'GET':
+          response = await http
+              .get(url, headers: headers)
+              .timeout(const Duration(seconds: 10));
+          break;
+        case 'POST':
+          response = await http
+              .post(url, headers: headers, body: jsonEncode(body))
+              .timeout(const Duration(seconds: 10));
+          break;
+        case 'PUT':
+          response = await http
+              .put(url, headers: headers, body: jsonEncode(body))
+              .timeout(const Duration(seconds: 10));
+          break;
+        case 'DELETE':
+          response = await http
+              .delete(url, headers: headers)
+              .timeout(const Duration(seconds: 10));
+          break;
+        default:
+          throw Exception('Unsupported HTTP method: $method');
+      }
+      // response = await http
+      //     .post(url, headers: headers, body: jsonEncode(body))
+      //     .timeout(const Duration(seconds: 10));
       log('📬 Received response (${response.statusCode})');
 
       log('🔍 [API Request] $method $endpoint - Status: ${response.statusCode}');
@@ -236,9 +241,14 @@ class AuthService {
           endpoint: ApiConstants.login,
           method: 'POST',
           body: {
+            'uid': firebaseUser.uid,
+            'email': firebaseUser.email,
+            'firstName': firebaseUser.displayName?.split(' ').first ?? '',
+            'lastName': firebaseUser.displayName?.split(' ').last ?? '',
+            'picture': firebaseUser.photoURL,
             'isEmailVerified': firebaseUser.emailVerified,
-          } // ✅ Send updated value},
-          );
+            'createdAt': firebaseUser.metadata.creationTime?.toIso8601String(),
+          }); // ✅ Send updated value},
       final decoded = jsonDecode(response.body);
       if (decoded['user'] == null) {
         throw Exception("User field missing in response");

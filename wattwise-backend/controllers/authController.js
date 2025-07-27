@@ -55,9 +55,17 @@ export const register = async (req, res, next) => {
 
 export const login = async (req, res, next) => {
   try {
-     console.log("🔐 logining user:", req.user);
-    const { uid, email, firstName, lastName, picture, createdAt} = req.user;
-    const { isEmailVerified } = req.body; // ✅ Grab this from the body
+     console.log("🔐 logining user:", req.body);
+    // const { uid, email, firstName, lastName, picture, createdAt} = req.user;
+     const { uid, email, firstName, lastName, picture, isEmailVerified, createdAt } = req.body || {}
+
+     // Defensive check
+    if (!uid || !email) {
+      return res.status(400).json({ success: false, message: "Invalid user data" });
+    }
+
+    // Split name into first and last name (fallback to "")
+    // const [firstName = '', lastName = ''] = name?.split(' ') ?? [];
 
     let user = await User.findOne({ firebaseUid: uid });
     console.log("🔐 Existing user:", user);

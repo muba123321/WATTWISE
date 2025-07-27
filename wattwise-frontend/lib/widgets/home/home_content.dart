@@ -39,7 +39,7 @@ class HomeContent extends StatelessWidget {
     log('first name: ${user.firstName}');
     log('last name: ${user.lastName}');
     log('email name: ${user.email}');
-    log('photoUrl name: ${user..photoUrl}');
+    log('photoUrl name: ${user.photoUrl}');
     log('isEmailVerified: ${user.isEmailVerified}');
     log('createdAt: ${user.createdAt}');
 

@@ -12,6 +12,7 @@ export default async (req, res, next) => {
   console.log("🛂 Received Firebase token:", token);
   try {
     const decoded = await getAuth().verifyIdToken(token);
+    console.log("🛂 Decoded Firebase token:", decoded);
     req.user = {
       uid: decoded.uid,
       email: decoded.email,

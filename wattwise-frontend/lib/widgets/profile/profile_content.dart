@@ -3,10 +3,12 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:wattwise/models/user_models.dart';
 import 'package:wattwise/providers/energy_provider.dart';
+import 'package:wattwise/providers/goal_provider.dart';
 import 'package:wattwise/providers/home_provider.dart';
 import 'package:wattwise/providers/profile_Provider.dart';
 import 'package:wattwise/providers/user_provider.dart';
 import 'package:wattwise/views/splash/splash_screen.dart';
+import 'package:wattwise/widgets/energygoals/add_goal.dart';
 import 'package:wattwise/widgets/meter/reading_type_selector.dart';
 import 'package:wattwise/widgets/profile/goal_card.dart';
 import 'package:wattwise/widgets/profile/info_item.dart';
@@ -27,7 +29,10 @@ class ProfileContent extends StatelessWidget {
   Widget build(BuildContext context) {
     final dateFormat = DateFormat('MMM d, yyyy');
     return RefreshIndicator(
-      onRefresh: () => profile.loadProfile(context),
+      onRefresh: () async {
+        await profile.loadProfile(context);
+        await Provider.of<GoalsProvider>(context, listen: false).fetchGoals();
+      },
       child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.all(16),
@@ -212,8 +217,35 @@ class ProfileContent extends StatelessWidget {
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
                 TextButton.icon(
-                  onPressed: () {
+                  onPressed: () async {
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const AddGoalScreen(),
+                      ),
+                    );
+                    await Provider.of<GoalsProvider>(context, listen: false)
+                        .fetchGoals();
                     // Navigate to add goal screen
+                    // showDialog(
+                    //   context: context,
+                    //   builder: (_) => AddGoalDialog(
+                    //     onSave: (title, target, deadline) async {
+                    //       // final success = await energyProvider.addEnergyGoal(
+                    //       //   title: title,
+                    //       //   target: target,
+                    //       //   deadline: deadline,
+                    //       // );
+                    //       // if (success && context.mounted) {
+                    //       //   await profile.loadProfile(context); // Refresh
+                    //       //   ScaffoldMessenger.of(context).showSnackBar(
+                    //       //     const SnackBar(
+                    //       //         content: Text('Energy goal added!')),
+                    //       //   );
+                    //       // }
+                    //     },
+                    //   ),
+                    // );
                   },
                   icon: const Icon(Icons.add),
                   label: const Text('Add Goal'),
@@ -222,46 +254,112 @@ class ProfileContent extends StatelessWidget {
             ),
             const SizedBox(height: 16),
 
-            if (user.goals != null && user.goals!.isNotEmpty)
-              ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: user.goals!.length,
-                itemBuilder: (context, index) {
-                  return GoalCard(goal: user.goals![index]);
-                },
-              )
-            else
-              Card(
-                elevation: 2,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    children: [
-                      Icon(
-                        Icons.emoji_events_outlined,
-                        size: 48,
-                        color: Colors.grey,
+            /// 🎯 Selector for Goals
+            Selector<GoalsProvider, List<EnergyGoal>>(
+              selector: (_, provider) => provider.goals,
+              builder: (_, goals, __) {
+                if (goals.isEmpty) {
+                  return Card(
+                    elevation: 2,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        children: [
+                          const Icon(Icons.emoji_events_outlined,
+                              size: 48, color: Colors.grey),
+                          const SizedBox(height: 16),
+                          Text(
+                            'No Energy Goals Set',
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Set energy-saving goals to track your progress and reduce consumption.',
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 16),
-                      Text(
-                        'No Energy Goals Set',
-                        style: Theme.of(context).textTheme.bodySmall,
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Set energy-saving goals to track your progress and reduce consumption.',
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+                    ),
+                  );
+                }
+
+                return ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: goals.length,
+                  itemBuilder: (context, index) {
+                    final goal = goals[index];
+                    return GoalCard(
+                      goal: goal,
+                      onDelete: () async {
+                        await Provider.of<GoalsProvider>(context, listen: false)
+                            .deleteGoal(goal.id);
+                      },
+                    );
+                  },
+                );
+              },
+            ),
+
+            // if (user.goals != null && user.goals!.isNotEmpty)
+            //   ListView.builder(
+            //     shrinkWrap: true,
+            //     physics: const NeverScrollableScrollPhysics(),
+            //     itemCount: user.goals?.length ?? 0,
+            //     itemBuilder: (context, index) {
+            //       final goal = user.goals![index];
+            //       return GoalCard(
+            //           goal: goal,
+            //           onDelete: () {
+            //             // Handle goal deletion
+            //             // energyProvider
+            //             //     .deleteEnergyGoal(goal.id)
+            //             //     .then((success) {
+            //             //   if (success && context.mounted) {
+            //             //     profile.loadProfile(context); // Refresh goals
+            //             //     ScaffoldMessenger.of(context).showSnackBar(
+            //             //       const SnackBar(
+            //             //           content: Text('Energy goal deleted!')),
+            //             //     );
+            //             //   }
+            //             // });
+            //           });
+            //     },
+            //   )
+            // else
+            //   Card(
+            //     elevation: 2,
+            //     shape: RoundedRectangleBorder(
+            //       borderRadius: BorderRadius.circular(12),
+            //     ),
+            //     child: Padding(
+            //       padding: const EdgeInsets.all(16),
+            //       child: Column(
+            //         children: [
+            //           Icon(
+            //             Icons.emoji_events_outlined,
+            //             size: 48,
+            //             color: Colors.grey,
+            //           ),
+            //           const SizedBox(height: 16),
+            //           Text(
+            //             'No Energy Goals Set',
+            //             style: Theme.of(context).textTheme.bodySmall,
+            //             textAlign: TextAlign.center,
+            //           ),
+            //           const SizedBox(height: 8),
+            //           Text(
+            //             'Set energy-saving goals to track your progress and reduce consumption.',
+            //             textAlign: TextAlign.center,
+            //             style: Theme.of(context).textTheme.bodyMedium,
+            //           ),
+            //         ],
+            //       ),
+            //     ),
+            //   ),
             const SizedBox(height: 24),
 
             // Logout button

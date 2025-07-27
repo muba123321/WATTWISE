@@ -11,7 +11,7 @@ import '../services/storage_service.dart';
 
 class UserProvider extends ChangeNotifier {
   final AuthService _authService;
-  final ApiService _apiService;
+  late ApiService _apiService;
   final StorageService _storageService;
 
   User? _user;
@@ -19,11 +19,10 @@ class UserProvider extends ChangeNotifier {
   bool _isAuthenticated = false;
   String? _error;
 
-  UserProvider(
-    this._storageService,
-  )   : _authService = AuthService(),
-        _apiService = ApiService(AuthService()) {
-    // Initialize by checking locally stored user data
+  UserProvider(this._storageService) : _authService = AuthService() {
+    _apiService = ApiService(_authService);
+    // Initialize by checking loc
+    // ally stored user data
     final userData = _storageService.getUserData();
     if (userData != null) {
       _user = User.fromJson(userData);
@@ -62,7 +61,7 @@ class UserProvider extends ChangeNotifier {
 
       await _authService.updateProfile(
           firstName: firstName, lastName: lastName);
-
+      await _authService.clearCachedToken();
       final user = await _authService.registerWithBackend(
         email: email,
         firstName: firstName,
@@ -96,6 +95,8 @@ class UserProvider extends ChangeNotifier {
     try {
       await _authService.loginWithEmailAndPassword(email, password);
 
+      await _authService.clearCachedToken();
+
       final user = await _authService.loginWithBackend();
 
       _user = user;
@@ -106,6 +107,7 @@ class UserProvider extends ChangeNotifier {
       return true;
     } catch (e) {
       _error = e.toString();
+
       notifyListeners();
       return false;
     } finally {
@@ -131,7 +133,7 @@ class UserProvider extends ChangeNotifier {
         log('starting ......4');
         throw Exception('Google Sign-In failed.');
       }
-
+      await _authService.clearCachedToken();
       final userfromB = await _authService.loginWithBackend();
       log('user in provider ......${userfromB.email}');
       log('user in provider ......${userfromB.firstName}');

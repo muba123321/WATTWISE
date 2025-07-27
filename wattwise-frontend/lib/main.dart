@@ -7,9 +7,12 @@ import 'package:wattwise/config/theme.dart';
 import 'package:wattwise/firebase_options.dart';
 import 'package:wattwise/providers/appliance_provider.dart';
 import 'package:wattwise/providers/energy_provider.dart';
+import 'package:wattwise/providers/goal_provider.dart';
 import 'package:wattwise/providers/home_provider.dart';
 import 'package:wattwise/providers/profile_Provider.dart';
 import 'package:wattwise/providers/user_provider.dart';
+import 'package:wattwise/services/api_service.dart';
+import 'package:wattwise/services/auth_service.dart';
 import 'package:wattwise/services/storage_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:camera/camera.dart';
@@ -54,6 +57,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    final authService = AuthService();
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => UserProvider(storageService)),
@@ -61,6 +65,10 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ProfileProvider()),
         ChangeNotifierProvider(create: (_) => ApplianceProvider()),
         ChangeNotifierProvider(create: (_) => EnergyProvider()),
+        ChangeNotifierProvider(
+            create: (_) => GoalsProvider(
+                  ApiService(authService),
+                )),
       ],
       child: Consumer<UserProvider>(builder: (context, userProvider, _) {
         return MaterialApp(
